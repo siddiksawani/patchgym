@@ -3,7 +3,7 @@
 PatchGym is a small local playground for code-repair agents. The current build
 has the project skeleton, three intentionally buggy Python tasks, a simple pytest
 runner, a safe action system for predefined text repairs, and a minimal
-Gym-style environment.
+Gym-style environment with baseline agents and JSONL trajectory logging.
 
 ## Setup
 
@@ -46,19 +46,23 @@ for `None` or empty inputs.
 ## Run the Environment
 
 ```python
+from patchgym.agents import HeuristicAgent
 from patchgym.env import PatchEnv
 
-env = PatchEnv("tasks/task_003_wrong_operator")
+env = PatchEnv("tasks/task_003_wrong_operator", agent_name="HeuristicAgent")
 obs, info = env.reset()
-obs, reward, done, truncated, info = env.step(
-    "replace_greater_than_with_greater_equal"
-)
+agent = HeuristicAgent(env.action_space, bug_type=env.task.bug_type)
+obs, reward, done, truncated, info = env.step(agent.act(obs))
 env.close()
 ```
 
 `reset()` copies the task into a temporary workspace and runs the baseline tests.
 `step()` applies one allowed action, reruns pytest, calculates reward, and returns
 `(observation, reward, done, truncated, info)`.
+
+Each `step()` writes one JSONL trajectory row by default under
+`outputs/trajectories/`. Pass `trajectory_dir=None` to disable file logging for a
+run.
 
 ## Current Tasks
 
@@ -78,3 +82,5 @@ env.close()
 - Simple `None` and empty-list guard actions
 - `PatchEnv.reset()` and `PatchEnv.step()`
 - Simple observation and reward helpers
+- RandomAgent and HeuristicAgent baselines
+- JSONL trajectory logging

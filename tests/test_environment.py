@@ -7,8 +7,13 @@ from patchgym.env import PatchEnv, calculate_reward
 from patchgym.runners import TestResult
 
 
+def make_env(task_name: str = "task_003_wrong_operator", **kwargs: object) -> PatchEnv:
+    kwargs.setdefault("trajectory_dir", None)
+    return PatchEnv(Path("tasks") / task_name, **kwargs)
+
+
 def test_reset_copies_task_and_returns_baseline_observation() -> None:
-    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+    with make_env() as env:
         obs, info = env.reset()
 
         assert obs["task_id"] == "task_003_wrong_operator"
@@ -22,7 +27,7 @@ def test_reset_copies_task_and_returns_baseline_observation() -> None:
 
 
 def test_step_applies_action_and_solves_task() -> None:
-    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+    with make_env() as env:
         env.reset()
 
         obs, reward, done, truncated, info = env.step(
@@ -40,7 +45,7 @@ def test_step_applies_action_and_solves_task() -> None:
 
 
 def test_step_truncates_at_task_max_steps() -> None:
-    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+    with make_env() as env:
         env.reset()
 
         for _ in range(env.task.max_steps):
@@ -54,7 +59,7 @@ def test_step_truncates_at_task_max_steps() -> None:
 
 
 def test_step_rejects_action_outside_task_action_space() -> None:
-    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+    with make_env() as env:
         env.reset()
 
         with pytest.raises(ValueError, match="not allowed"):
@@ -62,13 +67,13 @@ def test_step_rejects_action_outside_task_action_space() -> None:
 
 
 def test_action_space_exposes_registered_task_actions_only() -> None:
-    env = PatchEnv(Path("tasks") / "task_002_none_guard")
+    env = make_env("task_002_none_guard")
 
     assert env.action_space == ["add_none_guard"]
 
 
 def test_step_rejects_unknown_action() -> None:
-    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+    with make_env() as env:
         env.reset()
 
         with pytest.raises(ValueError, match="Unknown action"):
@@ -76,7 +81,7 @@ def test_step_rejects_unknown_action() -> None:
 
 
 def test_step_accepts_registered_action_object() -> None:
-    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+    with make_env() as env:
         env.reset()
 
         _obs, _reward, done, _truncated, _info = env.step(
@@ -97,7 +102,7 @@ def test_step_rejects_forged_action_object_with_allowed_id() -> None:
         description="Bypass registry",
     )
 
-    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+    with make_env() as env:
         env.reset()
 
         with pytest.raises(ValueError, match="registry"):
@@ -105,7 +110,7 @@ def test_step_rejects_forged_action_object_with_allowed_id() -> None:
 
 
 def test_step_requires_reset() -> None:
-    env = PatchEnv(Path("tasks") / "task_003_wrong_operator")
+    env = make_env()
 
     with pytest.raises(RuntimeError, match="reset"):
         env.step("replace_greater_than_with_greater_equal")

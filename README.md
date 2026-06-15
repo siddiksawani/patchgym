@@ -52,6 +52,9 @@ Run a benchmark:
 patchgym benchmark --agent heuristic --tasks tasks --episodes 1
 ```
 
+CI runs a smaller representative smoke benchmark to keep pull-request feedback
+quick; the full 15-task benchmark is intended for local or manual runs.
+
 ## Basic Usage
 
 ```python
@@ -189,7 +192,9 @@ Example leaderboard from the heuristic baseline:
 ## CI
 
 GitHub Actions installs the package, runs `ruff check .`, executes pytest,
-validates all tasks, and runs a heuristic benchmark smoke test.
+validates all tasks, and runs a heuristic smoke benchmark on three
+representative tasks. Full 15-task benchmarks are kept as local/manual runs
+because each episode launches pytest subprocesses.
 
 ## Why This Matters
 

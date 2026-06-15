@@ -31,5 +31,12 @@ jobs:
       - name: Validate tasks
         run: patchgym validate-tasks --tasks tasks
 
+      - name: Prepare smoke tasks
+        run: |
+          mkdir smoke_tasks
+          cp -R tasks/task_001_off_by_one smoke_tasks/
+          cp -R tasks/task_003_wrong_operator smoke_tasks/
+          cp -R tasks/task_012_normalize_slug_none smoke_tasks/
+
       - name: Smoke benchmark
-        run: patchgym benchmark --agent heuristic --tasks tasks --episodes 1 --no-trajectories --seed 0
+        run: patchgym benchmark --agent heuristic --tasks smoke_tasks --episodes 1 --no-trajectories --seed 0

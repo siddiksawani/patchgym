@@ -64,6 +64,16 @@ Each `step()` writes one JSONL trajectory row by default under
 `outputs/trajectories/`. Pass `trajectory_dir=None` to disable file logging for a
 run.
 
+## Run a Benchmark
+
+```powershell
+python -m patchgym.runners.benchmark_runner --agent heuristic --tasks tasks --episodes 1
+```
+
+The benchmark runner evaluates one agent across all task folders, saves per-run
+CSV rows under `outputs/reports/`, writes a CSV leaderboard, and keeps each
+episode trajectory under `outputs/trajectories/`.
+
 ## Current Tasks
 
 - `task_001_off_by_one`: a list counter skips the last item.
@@ -84,3 +94,5 @@ run.
 - Simple observation and reward helpers
 - RandomAgent and HeuristicAgent baselines
 - JSONL trajectory logging
+- Benchmark runner
+- CSV leaderboard

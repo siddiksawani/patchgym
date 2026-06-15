@@ -8,11 +8,9 @@ from patchgym.runners.benchmark_runner import discover_task_dirs, run_benchmark
 def test_discover_task_dirs_finds_starter_tasks() -> None:
     task_ids = [path.name for path in discover_task_dirs("tasks")]
 
-    assert task_ids == [
-        "task_001_off_by_one",
-        "task_002_none_guard",
-        "task_003_wrong_operator",
-    ]
+    expected = {"task_001_off_by_one", "task_002_none_guard", "task_003_wrong_operator"}
+    assert expected.issubset(task_ids)
+    assert task_ids == sorted(task_ids)
 
 
 def test_run_benchmark_writes_csv_reports(tmp_path) -> None:

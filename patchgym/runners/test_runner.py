@@ -12,6 +12,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 _COUNT_RE = re.compile(r"(?P<count>\d+)\s+(?P<label>passed|failed|error|errors)")
+_ASSERTION_FAILURE_RE = re.compile(r"^E\s+(AssertionError\b|assert\s)", re.MULTILINE)
 
 
 @dataclass(frozen=True)
@@ -106,7 +107,7 @@ def _classify_error(stdout: str, stderr: str, return_code: int) -> str | None:
         return "import_error"
     if any(name in combined for name in ("AttributeError", "TypeError", "IndexError")):
         return "runtime_error"
-    if "AssertionError" in combined or "assert " in combined:
+    if _ASSERTION_FAILURE_RE.search(combined):
         return "assertion_failure"
     return "runtime_error"
 

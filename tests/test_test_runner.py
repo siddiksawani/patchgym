@@ -19,6 +19,25 @@ def test_runner_reports_runtime_error_type() -> None:
     assert result.error_type == "runtime_error"
 
 
+def test_runner_does_not_treat_assert_source_line_as_assertion_failure(tmp_path: Path) -> None:
+    (tmp_path / "buggy.py").write_text(
+        "def explode():\n"
+        "    raise ValueError('not an assertion')\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "tests.py").write_text(
+        "from buggy import explode\n\n"
+        "def test_explode():\n"
+        "    assert explode() == 1\n",
+        encoding="utf-8",
+    )
+
+    result = PytestRunner().run(tmp_path)
+
+    assert result.failed == 1
+    assert result.error_type == "runtime_error"
+
+
 def test_runner_reports_passing_task(tmp_path: Path) -> None:
     (tmp_path / "buggy.py").write_text("def add(a, b):\n    return a + b\n", encoding="utf-8")
     (tmp_path / "tests.py").write_text(

@@ -42,7 +42,7 @@ def _required_str(metadata: dict[str, object], key: str) -> str:
 
 def _required_int(metadata: dict[str, object], key: str) -> int:
     value = metadata.get(key)
-    if not isinstance(value, int):
+    if isinstance(value, bool) or not isinstance(value, int):
         raise ValueError(f"metadata.{key} must be an integer")
     return value
 

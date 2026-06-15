@@ -1,0 +1,10 @@
+{
+  "task_id": "task_012_normalize_slug_none",
+  "title": "Normalize slug None guard",
+  "difficulty": "medium",
+  "bug_type": "none_guard",
+  "max_steps": 3,
+  "expected_fix": "Return an empty slug when text is None.",
+  "allowed_actions": ["add_none_guard"],
+  "tags": ["medium", "guard", "normalization"]
+}

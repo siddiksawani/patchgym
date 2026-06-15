@@ -30,4 +30,4 @@ jobs:
         run: patchgym validate-tasks --tasks tasks
 
       - name: Smoke benchmark
-        run: patchgym benchmark --agent random --tasks tasks --episodes 1 --no-trajectories --seed 0
+        run: patchgym benchmark --agent heuristic --tasks tasks --episodes 1 --no-trajectories --seed 0

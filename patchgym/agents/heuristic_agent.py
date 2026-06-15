@@ -27,6 +27,7 @@ class HeuristicAgent(BaseAgent):
             return [
                 "replace_range_len_minus_one_with_range_len",
                 "replace_minus_one_with_plus_one",
+                "replace_plus_one_with_minus_one",
                 "replace_less_than_with_less_equal",
                 "replace_greater_than_with_greater_equal",
             ]
@@ -41,4 +42,10 @@ class HeuristicAgent(BaseAgent):
                 "replace_equal_equal_with_not_equal",
                 "replace_not_equal_with_equal_equal",
             ]
+        if "membership" in bug_type:
+            return ["replace_if_in_with_if_not_in"]
+        if "logic" in bug_type:
+            return ["replace_or_with_and", "replace_and_with_or"]
+        if "boolean" in bug_type:
+            return ["replace_return_false_with_return_true", "replace_return_true_with_return_false"]
         return []

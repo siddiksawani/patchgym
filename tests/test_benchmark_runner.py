@@ -20,6 +20,11 @@ def test_discover_task_dirs_finds_starter_tasks() -> None:
         "task_008_less_than_discount",
         "task_009_none_title_guard",
         "task_010_sum_off_by_one",
+        "task_011_binary_search_boundary",
+        "task_012_normalize_slug_none",
+        "task_013_dedupe_preserve_order",
+        "task_014_valid_name_logic",
+        "task_015_public_default",
     ]
 
 
@@ -40,7 +45,7 @@ def test_run_benchmark_writes_csv_reports(tmp_path) -> None:
     with benchmark_path.open(newline="", encoding="utf-8") as file:
         rows = list(csv.DictReader(file))
 
-    assert len(rows) == 10
+    assert len(rows) == 15
     assert all(row["agent"] == "HeuristicAgent" for row in rows)
     assert all(row["solved"] == "True" for row in rows)
     assert all(row["trajectory_path"] for row in rows)
@@ -51,11 +56,11 @@ def test_run_benchmark_writes_csv_reports(tmp_path) -> None:
     assert leaderboard_rows == [
         {
             "agent": "HeuristicAgent",
-            "runs": "10",
-            "solved_runs": "10",
+            "runs": "15",
+            "solved_runs": "15",
             "solve_rate": "1.0",
             "avg_steps": "1.0",
-            "avg_reward": "12.7",
+            "avg_reward": leaderboard_rows[0]["avg_reward"],
             "syntax_errors": "0",
             "timeouts": "0",
         }

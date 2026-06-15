@@ -77,7 +77,10 @@ def _run_task(args: argparse.Namespace) -> None:
         truncated = False
         info: dict[str, object] = {}
         while not done and not truncated:
-            observation, reward, done, truncated, info = env.step(agent.act(observation))
+            previous_observation = observation
+            action_id = agent.act(observation)
+            observation, reward, done, truncated, info = env.step(action_id)
+            agent.observe(previous_observation, action_id, reward, observation, done, truncated)
             total_reward += reward
 
         print(

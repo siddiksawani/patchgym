@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -38,7 +39,7 @@ class TestResult:
 
 
 class PytestRunner:
-    def __init__(self, timeout_seconds: float = 15.0) -> None:
+    def __init__(self, timeout_seconds: float = 5.0) -> None:
         self.timeout_seconds = timeout_seconds
 
     def run(self, task_dir: str | Path) -> TestResult:
@@ -48,14 +49,25 @@ class PytestRunner:
             raise FileNotFoundError(f"Task tests not found: {tests_path}")
 
         started = time.perf_counter()
+        env = os.environ.copy()
+        env.setdefault("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
         try:
             completed = subprocess.run(
-                [sys.executable, "-m", "pytest", tests_path.name, "-q"],
+                [
+                    sys.executable,
+                    "-m",
+                    "pytest",
+                    tests_path.name,
+                    "-q",
+                    "--tb=short",
+                    "--disable-warnings",
+                ],
                 cwd=task_path,
                 capture_output=True,
                 text=True,
                 timeout=self.timeout_seconds,
                 check=False,
+                env=env,
             )
         except subprocess.TimeoutExpired as exc:
             duration_ms = int((time.perf_counter() - started) * 1000)
@@ -118,7 +130,7 @@ def _classify_error(stdout: str, stderr: str, return_code: int) -> str | None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run pytest for one PatchGym task.")
     parser.add_argument("task_dir", help="Path to a task directory containing tests.py")
-    parser.add_argument("--timeout", type=float, default=15.0, help="Timeout in seconds")
+    parser.add_argument("--timeout", type=float, default=5.0, help="Timeout in seconds")
     args = parser.parse_args()
 
     result = PytestRunner(timeout_seconds=args.timeout).run(args.task_dir)

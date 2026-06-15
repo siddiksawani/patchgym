@@ -16,6 +16,17 @@ class BaseAgent:
     def act(self, observation: dict[str, object]) -> str:
         raise NotImplementedError
 
+    def observe(
+        self,
+        observation: dict[str, object],
+        action: str,
+        reward: float,
+        next_observation: dict[str, object],
+        done: bool,
+        truncated: bool,
+    ) -> None:
+        """Optional learning hook for agents that update after each transition."""
+
     def _require_actions(self) -> None:
         if not self.action_space:
             raise ValueError(f"{self.name} requires at least one action.")

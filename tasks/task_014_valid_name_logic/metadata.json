@@ -1,0 +1,10 @@
+{
+  "task_id": "task_014_valid_name_logic",
+  "title": "Valid name logic",
+  "difficulty": "medium",
+  "bug_type": "boolean_logic",
+  "max_steps": 3,
+  "expected_fix": "Require both non-None and non-empty conditions.",
+  "allowed_actions": ["replace_or_with_and"],
+  "tags": ["medium", "boolean", "logic"]
+}

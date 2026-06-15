@@ -1,0 +1,10 @@
+{
+  "task_id": "task_011_binary_search_boundary",
+  "title": "Binary search boundary",
+  "difficulty": "medium",
+  "bug_type": "off_by_one_boundary",
+  "max_steps": 3,
+  "expected_fix": "Use <= so the final candidate index is tested.",
+  "allowed_actions": ["replace_less_than_with_less_equal"],
+  "tags": ["medium", "search", "boundary"]
+}

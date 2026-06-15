@@ -24,9 +24,9 @@ def test_trajectory_logger_sanitizes_custom_episode_id(tmp_path) -> None:
     )
     logger.close()
 
-    assert logger.episode_id == ".._outside"
+    assert logger.episode_id == "_outside"
     assert logger.path.parent == tmp_path
-    assert logger.path.name == ".._outside.jsonl"
+    assert logger.path.name == "_outside.jsonl"
     assert logger.path.resolve().parent == tmp_path.resolve()
 
 

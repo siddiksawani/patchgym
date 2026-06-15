@@ -45,5 +45,5 @@ class TrajectoryLogger:
 
 
 def _slug(value: str) -> str:
-    slug = re.sub(r"[^A-Za-z0-9_.-]+", "_", value).strip("_")
+    slug = re.sub(r"[^A-Za-z0-9_.-]+", "_", value).strip("_").lstrip(".")
     return slug or "unknown"

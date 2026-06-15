@@ -1,0 +1,10 @@
+{
+  "task_id": "task_013_dedupe_preserve_order",
+  "title": "Dedupe while preserving order",
+  "difficulty": "medium",
+  "bug_type": "membership_operator",
+  "max_steps": 3,
+  "expected_fix": "Append items only when they are not already in the result list.",
+  "allowed_actions": ["replace_if_in_with_if_not_in"],
+  "tags": ["medium", "collections", "membership"]
+}

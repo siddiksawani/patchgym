@@ -17,6 +17,11 @@ TASK_IDS = [
     "task_008_less_than_discount",
     "task_009_none_title_guard",
     "task_010_sum_off_by_one",
+    "task_011_binary_search_boundary",
+    "task_012_normalize_slug_none",
+    "task_013_dedupe_preserve_order",
+    "task_014_valid_name_logic",
+    "task_015_public_default",
 ]
 
 
@@ -28,7 +33,7 @@ def test_loads_first_task_metadata() -> None:
     assert "replace_range_len_minus_one_with_range_len" in task.allowed_actions
 
 
-def test_all_ten_tasks_validate() -> None:
+def test_all_tasks_validate() -> None:
     results = validate_tasks(Path("tasks"))
 
     assert [result.task_id for result in results] == TASK_IDS

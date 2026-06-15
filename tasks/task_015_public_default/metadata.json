@@ -1,0 +1,10 @@
+{
+  "task_id": "task_015_public_default",
+  "title": "Public default flag",
+  "difficulty": "medium",
+  "bug_type": "boolean_literal",
+  "max_steps": 3,
+  "expected_fix": "Return True for the public-by-default policy.",
+  "allowed_actions": ["replace_return_false_with_return_true"],
+  "tags": ["medium", "boolean", "policy"]
+}

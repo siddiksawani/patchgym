@@ -6,11 +6,11 @@ import argparse
 from datetime import datetime, timezone
 from pathlib import Path
 
-from patchgym.agents import BaseAgent, HeuristicAgent, RandomAgent
+from patchgym.agents import BaseAgent, HeuristicAgent, QLearningAgent, RandomAgent
 from patchgym.env import PatchEnv
 from patchgym.reporting import build_leaderboard, write_benchmark_csv, write_leaderboard_csv
 
-SUPPORTED_AGENTS = ("random", "heuristic")
+SUPPORTED_AGENTS = ("random", "heuristic", "qlearning")
 
 
 def run_benchmark(
@@ -80,8 +80,10 @@ def run_episode(
         truncated = False
 
         while not done and not truncated:
+            previous_observation = observation
             action_id = agent.act(observation)
             observation, reward, done, truncated, info = env.step(action_id)
+            agent.observe(previous_observation, action_id, reward, observation, done, truncated)
             total_reward += reward
 
             result = info["result"]
@@ -116,6 +118,8 @@ def create_agent(agent_name: str, env: PatchEnv, seed: int | None = None) -> Bas
         return RandomAgent(env.action_space, seed=seed)
     if normalized == "heuristic":
         return HeuristicAgent(env.action_space, bug_type=env.task.bug_type)
+    if normalized == "qlearning":
+        return QLearningAgent(env.action_space, bug_type=env.task.bug_type, seed=seed)
     raise ValueError(f"Unsupported agent {agent_name!r}. Choose from: {', '.join(SUPPORTED_AGENTS)}")
 
 

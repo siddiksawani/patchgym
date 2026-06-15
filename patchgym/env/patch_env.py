@@ -31,9 +31,14 @@ class PatchEnv:
             self.workspace_root.mkdir(parents=True, exist_ok=True)
         self.trajectory_dir = Path(trajectory_dir) if trajectory_dir is not None else None
         self.agent_name = agent_name
-        self.action_space = [
-            action_id for action_id in self.task.allowed_actions if action_id in ACTION_REGISTRY
+        unknown_actions = [
+            action_id for action_id in self.task.allowed_actions if action_id not in ACTION_REGISTRY
         ]
+        if unknown_actions:
+            raise ValueError(
+                f"Unknown action(s) in {self.task.task_id}: {', '.join(unknown_actions)}"
+            )
+        self.action_space = list(self.task.allowed_actions)
 
         self._temp_dir: TemporaryDirectory[str] | None = None
         self._workspace_dir: Path | None = None

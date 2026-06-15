@@ -1,4 +1,6 @@
+import json
 from pathlib import Path
+from shutil import copytree
 
 import pytest
 
@@ -70,6 +72,18 @@ def test_action_space_exposes_registered_task_actions_only() -> None:
     env = make_env("task_002_none_guard")
 
     assert env.action_space == ["add_none_guard"]
+
+
+def test_env_rejects_task_metadata_with_unknown_action(tmp_path: Path) -> None:
+    task_copy = tmp_path / "task_003_wrong_operator"
+    copytree(Path("tasks") / "task_003_wrong_operator", task_copy)
+    metadata_path = task_copy / "metadata.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata["allowed_actions"] = ["missing_action"]
+    metadata_path.write_text(json.dumps(metadata), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Unknown action"):
+        PatchEnv(task_copy, trajectory_dir=None)
 
 
 def test_step_rejects_unknown_action() -> None:

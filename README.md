@@ -1,5 +1,9 @@
 # PatchGym
 
+![CI](https://github.com/siddiksawani/patchgym/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 PatchGym is a lightweight local environment for evaluating code-repair agents.
 Each task contains a small buggy Python program, pytest tests, metadata, and a
 short description. Agents choose from predefined safe patch actions, PatchGym
@@ -9,13 +13,13 @@ The project is intentionally CPU-friendly and small enough to run on a laptop.
 
 ## Features
 
-- 10 local Python code-repair tasks
+- 15 local Python code-repair tasks
 - Safe predefined action registry
 - Gym-style `PatchEnv.reset()` and `PatchEnv.step()` API
 - pytest-based verification in temporary workspaces
 - Simple reward shaping
 - JSONL trajectory logging
-- RandomAgent and HeuristicAgent baselines
+- RandomAgent, HeuristicAgent, and QLearningAgent baselines
 - Benchmark runner with CSV reports
 - CSV leaderboard generation
 - Task validation command
@@ -86,7 +90,7 @@ Important modules:
 - `patchgym.actions`: safe code transformations
 - `patchgym.env`: environment, observations, and reward calculation
 - `patchgym.runners`: pytest runner and benchmark runner
-- `patchgym.agents`: random and heuristic baselines
+- `patchgym.agents`: random, heuristic, and tabular Q-learning baselines
 - `patchgym.trajectories`: JSONL logging
 - `patchgym.reporting`: benchmark CSV and leaderboard helpers
 - `patchgym.tasks`: task loading and validation
@@ -121,6 +125,11 @@ and that allowed actions exist in the registry.
 | `task_008_less_than_discount` | Wrong comparison boundary |
 | `task_009_none_title_guard` | Missing None guard |
 | `task_010_sum_off_by_one` | Off-by-one loop |
+| `task_011_binary_search_boundary` | Binary search boundary |
+| `task_012_normalize_slug_none` | Missing None guard |
+| `task_013_dedupe_preserve_order` | Membership operator |
+| `task_014_valid_name_logic` | Boolean logic |
+| `task_015_public_default` | Boolean literal |
 
 ## Reward Design
 
@@ -143,6 +152,13 @@ Passing all tests dominates the reward, while partial progress is still visible.
 actions. For example, off-by-one tasks prefer range and boundary actions, while
 None-related tasks prefer `add_none_guard`.
 
+`QLearningAgent` is a small tabular Q-learning baseline. Its state includes the
+bug type, number of passing tests, last error type, and step count. It is kept
+simple on purpose, but it gives the project a real learning-agent baseline.
+
+`HeuristicAgent` is a metadata-aware upper-bound baseline, not a realistic
+autonomous repair agent.
+
 ## Benchmark Reports
 
 Benchmarks write two CSV files under `outputs/reports/`:
@@ -154,6 +170,12 @@ Benchmarks write two CSV files under `outputs/reports/`:
 Trajectories are written under `outputs/trajectories/` unless disabled with
 `--no-trajectories`.
 
+Example leaderboard from the heuristic baseline:
+
+| Agent | Runs | Solved | Solve Rate | Avg Steps |
+| --- | ---: | ---: | ---: | ---: |
+| HeuristicAgent | 15 | 15 | 1.0 | 1.0 |
+
 ## Trajectory Example
 
 ```json
@@ -163,12 +185,30 @@ Trajectories are written under `outputs/trajectories/` unless disabled with
 ## CI
 
 GitHub Actions installs the package, runs `ruff check .`, executes pytest,
-validates all tasks, and runs a random-agent benchmark smoke test.
+validates all tasks, and runs a heuristic benchmark smoke test.
+
+## Why This Matters
+
+PatchGym keeps the coding-agent evaluation loop small and inspectable:
+patch action, test feedback, reward, and trajectory record. That makes it useful
+for experimenting with repair policies before moving to larger benchmark suites.
+
+## Security Note
+
+PatchGym executes local Python tasks through pytest. It is designed for trusted
+local benchmark tasks only. It is not a secure sandbox for untrusted code. Future
+versions may add Docker-based isolation.
+
+## Limitations
+
+PatchGym v0.1 uses simple regex/text transformations. This keeps the environment
+lightweight and explainable, but it is not a full semantic code-repair engine.
+Future versions will add token-aware or AST-aware transformations.
 
 ## Roadmap
 
-- Add more medium-difficulty tasks
-- Add QLearningAgent
+- Add Docker-based task isolation
+- Add token-aware or AST-aware actions
 - Add richer trajectory parsing and reporting
 - Add optional dashboard for benchmark inspection
 - Add hidden-test support for more realistic evaluation

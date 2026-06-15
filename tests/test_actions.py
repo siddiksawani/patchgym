@@ -61,6 +61,34 @@ def test_replace_minus_one_handles_binary_subtraction_without_spaces() -> None:
     assert patched == "def shift(value):\n    return value + 1\n"
 
 
+def test_replace_plus_one_with_minus_one() -> None:
+    code = "def last_index(items):\n    return len(items) + 1\n"
+
+    patched = get_action("replace_plus_one_with_minus_one").apply(code)
+
+    assert patched == "def last_index(items):\n    return len(items) - 1\n"
+
+
+def test_boolean_literal_and_logic_actions() -> None:
+    true_patch = get_action("replace_return_false_with_return_true").apply(
+        "def enabled():\n    return False\n"
+    )
+    logic_patch = get_action("replace_or_with_and").apply(
+        "def valid(name):\n    return name or 'x'\n"
+    )
+
+    assert true_patch == "def enabled():\n    return True\n"
+    assert logic_patch == "def valid(name):\n    return name and 'x'\n"
+
+
+def test_replace_if_in_with_if_not_in() -> None:
+    code = "def dedupe(items):\n    result = []\n    if item in result:\n        pass\n"
+
+    patched = get_action("replace_if_in_with_if_not_in").apply(code)
+
+    assert patched == "def dedupe(items):\n    result = []\n    if item not in result:\n        pass\n"
+
+
 def test_add_none_guard_uses_first_parameter() -> None:
     code = "def normalize_name(name):\n    return name.strip().title()\n"
 

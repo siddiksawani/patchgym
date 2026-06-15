@@ -2,9 +2,15 @@
   "task_id": "task_005_less_equal_boundary",
   "title": "Fix child age upper boundary",
   "difficulty": "easy",
-  "bug_type": "wrong_comparison_operator",
+  "bug_type": "wrong_less_equal_comparison_operator",
   "max_steps": 5,
   "expected_fix": "Use < instead of <= so age 12 is excluded.",
-  "allowed_actions": ["replace_less_equal_with_less_than"],
+  "allowed_actions": [
+    "replace_less_equal_with_less_than",
+    "replace_less_than_with_less_equal",
+    "replace_greater_than_with_greater_equal",
+    "replace_equal_equal_with_not_equal",
+    "add_none_guard"
+  ],
   "tags": ["python", "comparison", "boundary"]
 }

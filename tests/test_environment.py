@@ -65,13 +65,15 @@ def test_step_rejects_action_outside_task_action_space() -> None:
         env.reset()
 
         with pytest.raises(ValueError, match="not allowed"):
-            env.step("add_none_guard")
+            env.step("replace_return_true_with_return_false")
 
 
 def test_action_space_exposes_registered_task_actions_only() -> None:
     env = make_env("task_002_none_guard")
 
-    assert env.action_space == ["add_none_guard"]
+    assert "add_none_guard" in env.action_space
+    assert "add_empty_list_guard" in env.action_space
+    assert len(env.action_space) >= 4
 
 
 def test_env_rejects_task_metadata_with_unknown_action(tmp_path: Path) -> None:

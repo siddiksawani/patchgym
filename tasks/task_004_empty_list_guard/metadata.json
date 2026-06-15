@@ -5,6 +5,12 @@
   "bug_type": "missing_empty_list_guard",
   "max_steps": 5,
   "expected_fix": "Return 0 before indexing when the list is empty.",
-  "allowed_actions": ["add_empty_list_guard"],
+  "allowed_actions": [
+    "add_empty_list_guard",
+    "add_none_guard",
+    "replace_return_false_with_return_true",
+    "replace_less_than_with_less_equal",
+    "replace_or_with_and"
+  ],
   "tags": ["python", "list", "guard"]
 }

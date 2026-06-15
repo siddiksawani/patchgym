@@ -5,6 +5,12 @@
   "bug_type": "membership_operator",
   "max_steps": 3,
   "expected_fix": "Append items only when they are not already in the result list.",
-  "allowed_actions": ["replace_if_in_with_if_not_in"],
+  "allowed_actions": [
+    "replace_if_in_with_if_not_in",
+    "replace_equal_equal_with_not_equal",
+    "replace_not_equal_with_equal_equal",
+    "add_empty_list_guard",
+    "replace_or_with_and"
+  ],
   "tags": ["medium", "collections", "membership"]
 }

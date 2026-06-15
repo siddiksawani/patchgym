@@ -24,6 +24,8 @@ jobs:
         run: ruff check .
 
       - name: Test
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         run: pytest
 
       - name: Validate tasks

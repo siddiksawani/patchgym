@@ -2,9 +2,15 @@
   "task_id": "task_011_binary_search_boundary",
   "title": "Binary search boundary",
   "difficulty": "medium",
-  "bug_type": "off_by_one_boundary",
+  "bug_type": "wrong_less_than_comparison_boundary",
   "max_steps": 3,
   "expected_fix": "Use <= so the final candidate index is tested.",
-  "allowed_actions": ["replace_less_than_with_less_equal"],
+  "allowed_actions": [
+    "replace_less_than_with_less_equal",
+    "replace_greater_than_with_greater_equal",
+    "replace_less_equal_with_less_than",
+    "replace_minus_one_with_plus_one",
+    "add_none_guard"
+  ],
   "tags": ["medium", "search", "boundary"]
 }

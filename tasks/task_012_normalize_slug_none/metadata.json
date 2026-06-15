@@ -5,6 +5,12 @@
   "bug_type": "none_guard",
   "max_steps": 3,
   "expected_fix": "Return an empty slug when text is None.",
-  "allowed_actions": ["add_none_guard"],
+  "allowed_actions": [
+    "add_none_guard",
+    "add_empty_list_guard",
+    "replace_return_false_with_return_true",
+    "replace_or_with_and",
+    "replace_less_than_with_less_equal"
+  ],
   "tags": ["medium", "guard", "normalization"]
 }

@@ -5,6 +5,12 @@
   "bug_type": "boolean_logic",
   "max_steps": 3,
   "expected_fix": "Require both non-None and non-empty conditions.",
-  "allowed_actions": ["replace_or_with_and"],
+  "allowed_actions": [
+    "replace_or_with_and",
+    "replace_and_with_or",
+    "add_none_guard",
+    "replace_equal_equal_with_not_equal",
+    "replace_not_equal_with_equal_equal"
+  ],
   "tags": ["medium", "boolean", "logic"]
 }

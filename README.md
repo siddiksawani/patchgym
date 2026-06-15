@@ -154,7 +154,11 @@ None-related tasks prefer `add_none_guard`.
 
 `QLearningAgent` is a small tabular Q-learning baseline. Its state includes the
 bug type, number of passing tests, last error type, and step count. It is kept
-simple on purpose, but it gives the project a real learning-agent baseline.
+simple on purpose, but it gives the project a real online-learning baseline.
+The standalone `examples/train_q_learning.py` script demonstrates repeated
+task-level learning with one Q-table per task. The benchmark runner currently
+creates fresh agents per episode, so benchmark results are best read as policy
+evaluation rather than persistent cross-episode training.
 
 `HeuristicAgent` is a metadata-aware upper-bound baseline, not a realistic
 autonomous repair agent.
@@ -203,12 +207,15 @@ versions may add Docker-based isolation.
 
 PatchGym v0.1 uses simple regex/text transformations. This keeps the environment
 lightweight and explainable, but it is not a full semantic code-repair engine.
-Future versions will add token-aware or AST-aware transformations.
+Some guard actions are intentionally broad, such as the empty-list guard using a
+falsy check. Future versions will add token-aware or AST-aware transformations.
 
 ## Roadmap
 
 - Add Docker-based task isolation
 - Add token-aware or AST-aware actions
+- Preserve learning state across benchmark episodes
+- Add multi-step repair tasks
 - Add richer trajectory parsing and reporting
 - Add optional dashboard for benchmark inspection
 - Add hidden-test support for more realistic evaluation

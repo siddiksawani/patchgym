@@ -2,9 +2,15 @@
   "task_id": "task_006_not_equal_operator",
   "title": "Fix active status check",
   "difficulty": "easy",
-  "bug_type": "wrong_comparison_operator",
+  "bug_type": "wrong_not_equal_comparison_operator",
   "max_steps": 5,
   "expected_fix": "Use == instead of != when checking for active status.",
-  "allowed_actions": ["replace_not_equal_with_equal_equal"],
+  "allowed_actions": [
+    "replace_not_equal_with_equal_equal",
+    "replace_equal_equal_with_not_equal",
+    "replace_less_than_with_less_equal",
+    "replace_return_false_with_return_true",
+    "add_none_guard"
+  ],
   "tags": ["python", "comparison", "string"]
 }

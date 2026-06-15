@@ -35,17 +35,34 @@ class HeuristicAgent(BaseAgent):
             return ["add_none_guard"]
         if "empty" in bug_type or "IndexError" in error_type:
             return ["add_empty_list_guard"]
-        if "operator" in bug_type or "comparison" in bug_type or error_type == "assertion_failure":
-            return [
-                "replace_greater_than_with_greater_equal",
-                "replace_less_than_with_less_equal",
-                "replace_equal_equal_with_not_equal",
-                "replace_not_equal_with_equal_equal",
-            ]
+        if "less_equal" in bug_type:
+            return ["replace_less_equal_with_less_than"]
+        if "greater_equal" in bug_type:
+            return ["replace_greater_equal_with_greater_than"]
+        if "less_than" in bug_type:
+            return ["replace_less_than_with_less_equal"]
+        if "greater_than" in bug_type:
+            return ["replace_greater_than_with_greater_equal"]
+        if "not_equal" in bug_type:
+            return ["replace_not_equal_with_equal_equal"]
+        if "equal_equal" in bug_type:
+            return ["replace_equal_equal_with_not_equal"]
         if "membership" in bug_type:
             return ["replace_if_in_with_if_not_in"]
         if "logic" in bug_type:
             return ["replace_or_with_and", "replace_and_with_or"]
         if "boolean" in bug_type:
-            return ["replace_return_false_with_return_true", "replace_return_true_with_return_false"]
+            return [
+                "replace_return_false_with_return_true",
+                "replace_return_true_with_return_false",
+            ]
+        if "operator" in bug_type or "comparison" in bug_type or error_type == "assertion_failure":
+            return [
+                "replace_greater_than_with_greater_equal",
+                "replace_less_than_with_less_equal",
+                "replace_less_equal_with_less_than",
+                "replace_greater_equal_with_greater_than",
+                "replace_equal_equal_with_not_equal",
+                "replace_not_equal_with_equal_equal",
+            ]
         return []

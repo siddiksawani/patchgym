@@ -1,0 +1,10 @@
+{
+  "task_id": "task_004_empty_list_guard",
+  "title": "Handle empty list lookup",
+  "difficulty": "easy",
+  "bug_type": "missing_empty_list_guard",
+  "max_steps": 5,
+  "expected_fix": "Return 0 before indexing when the list is empty.",
+  "allowed_actions": ["add_empty_list_guard"],
+  "tags": ["python", "list", "guard"]
+}

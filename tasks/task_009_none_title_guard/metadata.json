@@ -1,0 +1,10 @@
+{
+  "task_id": "task_009_none_title_guard",
+  "title": "Handle missing titles",
+  "difficulty": "easy",
+  "bug_type": "missing_none_guard",
+  "max_steps": 5,
+  "expected_fix": "Return an empty string when title is None.",
+  "allowed_actions": ["add_none_guard"],
+  "tags": ["python", "string", "none"]
+}

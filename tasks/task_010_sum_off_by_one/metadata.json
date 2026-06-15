@@ -1,0 +1,10 @@
+{
+  "task_id": "task_010_sum_off_by_one",
+  "title": "Fix off-by-one summation",
+  "difficulty": "easy",
+  "bug_type": "off_by_one",
+  "max_steps": 5,
+  "expected_fix": "Change range(len(numbers) - 1) to range(len(numbers)).",
+  "allowed_actions": ["replace_range_len_minus_one_with_range_len"],
+  "tags": ["python", "list", "off-by-one"]
+}

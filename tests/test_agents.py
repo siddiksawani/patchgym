@@ -2,6 +2,7 @@ import pytest
 
 from patchgym.agents import HeuristicAgent, RandomAgent
 from patchgym.env import PatchEnv
+from patchgym.tasks.validator import validate_tasks
 
 
 def test_random_agent_chooses_from_action_space() -> None:
@@ -29,12 +30,8 @@ def test_heuristic_agent_prefers_off_by_one_action() -> None:
     assert agent.act({}) == "replace_range_len_minus_one_with_range_len"
 
 
-def test_heuristic_agent_solves_starter_tasks() -> None:
-    task_names = [
-        "task_001_off_by_one",
-        "task_002_none_guard",
-        "task_003_wrong_operator",
-    ]
+def test_heuristic_agent_solves_all_tasks() -> None:
+    task_names = [result.task_id for result in validate_tasks("tasks")]
 
     for task_name in task_names:
         with PatchEnv(f"tasks/{task_name}", trajectory_dir=None) as env:

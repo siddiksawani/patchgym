@@ -1,0 +1,10 @@
+{
+  "task_id": "task_006_not_equal_operator",
+  "title": "Fix active status check",
+  "difficulty": "easy",
+  "bug_type": "wrong_comparison_operator",
+  "max_steps": 5,
+  "expected_fix": "Use == instead of != when checking for active status.",
+  "allowed_actions": ["replace_not_equal_with_equal_equal"],
+  "tags": ["python", "comparison", "string"]
+}

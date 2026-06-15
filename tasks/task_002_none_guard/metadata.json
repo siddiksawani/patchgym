@@ -6,9 +6,7 @@
   "max_steps": 5,
   "expected_fix": "Return an empty string when name is None.",
   "allowed_actions": [
-    "add_none_guard",
-    "replace_return_none_with_empty_string",
-    "add_empty_string_default"
+    "add_none_guard"
   ],
   "tags": ["python", "string", "none"]
 }

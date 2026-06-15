@@ -1,0 +1,10 @@
+{
+  "task_id": "task_007_greater_equal_boundary",
+  "title": "Fix strict passing threshold",
+  "difficulty": "easy",
+  "bug_type": "wrong_comparison_operator",
+  "max_steps": 5,
+  "expected_fix": "Use > instead of >= so the threshold itself is not passing.",
+  "allowed_actions": ["replace_greater_equal_with_greater_than"],
+  "tags": ["python", "comparison", "boundary"]
+}

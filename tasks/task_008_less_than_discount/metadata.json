@@ -1,0 +1,10 @@
+{
+  "task_id": "task_008_less_than_discount",
+  "title": "Include discount boundary",
+  "difficulty": "easy",
+  "bug_type": "wrong_comparison_operator",
+  "max_steps": 5,
+  "expected_fix": "Use <= so the exact discount limit qualifies.",
+  "allowed_actions": ["replace_less_than_with_less_equal"],
+  "tags": ["python", "comparison", "boundary"]
+}

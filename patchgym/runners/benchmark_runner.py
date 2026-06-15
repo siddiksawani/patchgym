@@ -73,7 +73,11 @@ def run_episode(
         total_reward = 0.0
         syntax_errors = 0
         timeouts = 0
+        result = info["result"]
+        if not isinstance(result, dict):
+            raise TypeError("info['result'] must be a result dictionary")
         done = bool(result["return_code"] == 0 and result["failed"] == 0 and result["total"] > 0)
+        truncated = False
 
         while not done and not truncated:
             action_id = agent.act(observation)

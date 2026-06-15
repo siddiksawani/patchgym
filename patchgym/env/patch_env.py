@@ -11,6 +11,7 @@ from patchgym.env.observation import Observation
 from patchgym.env.reward import calculate_reward
 from patchgym.runners import PytestRunner, TestResult
 from patchgym.tasks import Task, load_task
+from patchgym.trajectories import TrajectoryLogger
 from patchgym.utils.hashing import hash_code
 
 
@@ -20,12 +21,16 @@ class PatchEnv:
         task_dir: str | Path,
         runner: PytestRunner | None = None,
         workspace_root: str | Path | None = None,
+        trajectory_dir: str | Path | None = Path("outputs") / "trajectories",
+        agent_name: str = "PatchEnv",
     ) -> None:
         self.task: Task = load_task(task_dir)
         self.runner = runner or PytestRunner()
         self.workspace_root = Path(workspace_root).resolve() if workspace_root else None
         if self.workspace_root is not None:
             self.workspace_root.mkdir(parents=True, exist_ok=True)
+        self.trajectory_dir = Path(trajectory_dir) if trajectory_dir is not None else None
+        self.agent_name = agent_name
         self.action_space = [
             action_id for action_id in self.task.allowed_actions if action_id in ACTION_REGISTRY
         ]
@@ -39,10 +44,15 @@ class PatchEnv:
         self._done = False
         self._truncated = False
         self._last_action: str | None = None
+        self._trajectory_logger: TrajectoryLogger | None = None
 
     @property
     def workspace_dir(self) -> Path | None:
         return self._workspace_dir
+
+    @property
+    def trajectory_path(self) -> Path | None:
+        return self._trajectory_logger.path if self._trajectory_logger is not None else None
 
     def reset(self) -> tuple[dict[str, object], dict[str, object]]:
         self.close()
@@ -60,6 +70,12 @@ class PatchEnv:
         self._done = self._current_result.all_passed
         self._truncated = False
         self._last_action = None
+        if self.trajectory_dir is not None:
+            self._trajectory_logger = TrajectoryLogger(
+                output_dir=self.trajectory_dir,
+                agent_name=self.agent_name,
+                task_id=self.task.task_id,
+            )
 
         observation = self._build_observation()
         info = self._build_info(result=self._current_result, action_id=None, changed=False)
@@ -99,11 +115,15 @@ class PatchEnv:
             code_hash_before=hash_code(code_before),
             code_hash_after=hash_code(code_after),
         )
+        self._log_step(info=info, reward=reward, done=self._done, truncated=self._truncated)
         return observation.to_dict(), reward, self._done, self._truncated, info
 
     def close(self) -> None:
+        if self._trajectory_logger is not None:
+            self._trajectory_logger.close()
         if self._temp_dir is not None:
             self._temp_dir.cleanup()
+        self._trajectory_logger = None
         self._temp_dir = None
         self._workspace_dir = None
         self._buggy_path = None
@@ -163,7 +183,47 @@ class PatchEnv:
             "result": result.to_dict(),
             "code_hash_before": code_hash_before,
             "code_hash_after": code_hash_after or hash_code(self._current_code),
+            "trajectory_path": (
+                str(self._trajectory_logger.path) if self._trajectory_logger else None
+            ),
+            "episode_id": (
+                self._trajectory_logger.episode_id if self._trajectory_logger else None
+            ),
         }
+
+    def _log_step(
+        self,
+        info: dict[str, object],
+        reward: float,
+        done: bool,
+        truncated: bool,
+    ) -> None:
+        if self._trajectory_logger is None:
+            return
+
+        result = info["result"]
+        if not isinstance(result, dict):
+            raise TypeError("info['result'] must be a result dictionary")
+
+        self._trajectory_logger.write(
+            {
+                "episode_id": self._trajectory_logger.episode_id,
+                "task_id": self.task.task_id,
+                "agent": self.agent_name,
+                "step": self._step,
+                "action_id": info["action_id"],
+                "reward": reward,
+                "tests_passed": result["passed"],
+                "tests_failed": result["failed"],
+                "done": done,
+                "truncated": truncated,
+                "duration_ms": result["duration_ms"],
+                "code_hash_before": info["code_hash_before"],
+                "code_hash_after": info["code_hash_after"],
+                "error_type": result["error_type"],
+                "changed": info["changed"],
+            }
+        )
 
     def _require_active_episode(self) -> None:
         if self._workspace_dir is None or self._current_result is None:

@@ -1,0 +1,14 @@
+{
+  "task_id": "task_003_wrong_operator",
+  "title": "Fix adult age boundary",
+  "difficulty": "easy",
+  "bug_type": "wrong_comparison_operator",
+  "max_steps": 5,
+  "expected_fix": "Use >= so age 18 counts as adult.",
+  "allowed_actions": [
+    "replace_greater_than_with_greater_equal",
+    "replace_less_than_with_less_equal",
+    "replace_equal_equal_with_not_equal"
+  ],
+  "tags": ["python", "comparison", "boundary"]
+}

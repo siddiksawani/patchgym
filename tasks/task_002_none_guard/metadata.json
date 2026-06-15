@@ -1,0 +1,14 @@
+{
+  "task_id": "task_002_none_guard",
+  "title": "Handle missing names",
+  "difficulty": "easy",
+  "bug_type": "missing_none_guard",
+  "max_steps": 5,
+  "expected_fix": "Return an empty string when name is None.",
+  "allowed_actions": [
+    "add_none_guard",
+    "replace_return_none_with_empty_string",
+    "add_empty_string_default"
+  ],
+  "tags": ["python", "string", "none"]
+}

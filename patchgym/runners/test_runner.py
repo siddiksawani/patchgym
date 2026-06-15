@@ -10,6 +10,7 @@ import sys
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import ClassVar
 
 _COUNT_RE = re.compile(r"(?P<count>\d+)\s+(?P<label>passed|failed|error|errors)")
 _ASSERTION_FAILURE_RE = re.compile(r"^E\s+(AssertionError\b|assert\s)", re.MULTILINE)
@@ -17,6 +18,8 @@ _ASSERTION_FAILURE_RE = re.compile(r"^E\s+(AssertionError\b|assert\s)", re.MULTI
 
 @dataclass(frozen=True)
 class TestResult:
+    __test__: ClassVar[bool] = False
+
     passed: int
     failed: int
     total: int

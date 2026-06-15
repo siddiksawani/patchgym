@@ -2,7 +2,8 @@
 
 PatchGym is a small local playground for code-repair agents. The current build
 has the project skeleton, three intentionally buggy Python tasks, a simple pytest
-runner, and a safe action system for predefined text repairs.
+runner, a safe action system for predefined text repairs, and a minimal
+Gym-style environment.
 
 ## Setup
 
@@ -42,6 +43,23 @@ Actions are intentionally limited to safe predefined transformations. Phase two
 supports operator replacements, `- 1` replacements, and simple guard insertion
 for `None` or empty inputs.
 
+## Run the Environment
+
+```python
+from patchgym.env import PatchEnv
+
+env = PatchEnv("tasks/task_003_wrong_operator")
+obs, info = env.reset()
+obs, reward, done, truncated, info = env.step(
+    "replace_greater_than_with_greater_equal"
+)
+env.close()
+```
+
+`reset()` copies the task into a temporary workspace and runs the baseline tests.
+`step()` applies one allowed action, reruns pytest, calculates reward, and returns
+`(observation, reward, done, truncated, info)`.
+
 ## Current Tasks
 
 - `task_001_off_by_one`: a list counter skips the last item.
@@ -58,3 +76,5 @@ for `None` or empty inputs.
 - Operator replacement actions
 - `- 1` replacement actions
 - Simple `None` and empty-list guard actions
+- `PatchEnv.reset()` and `PatchEnv.step()`
+- Simple observation and reward helpers

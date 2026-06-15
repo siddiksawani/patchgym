@@ -42,7 +42,7 @@ def write_leaderboard_csv(rows: list[dict[str, object]], output_path: str | Path
     return _write_csv(rows, output_path, LEADERBOARD_FIELDS)
 
 
-def load_benchmark_csv(path: str | Path) -> list[dict[str, object]]:
+def load_benchmark_csv(path: str | Path) -> list[dict[str, str]]:
     with Path(path).open(newline="", encoding="utf-8") as file:
         return list(csv.DictReader(file))
 

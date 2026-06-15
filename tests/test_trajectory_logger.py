@@ -15,6 +15,21 @@ def test_trajectory_logger_writes_jsonl_record(tmp_path) -> None:
     assert json.loads(lines[0]) == {"reward": 10.0, "step": 1}
 
 
+def test_trajectory_logger_sanitizes_custom_episode_id(tmp_path) -> None:
+    logger = TrajectoryLogger(
+        tmp_path,
+        agent_name="Agent",
+        task_id="task",
+        episode_id="../outside",
+    )
+    logger.close()
+
+    assert logger.episode_id == ".._outside"
+    assert logger.path.parent == tmp_path
+    assert logger.path.name == ".._outside.jsonl"
+    assert logger.path.resolve().parent == tmp_path.resolve()
+
+
 def test_patch_env_writes_step_trajectory(tmp_path) -> None:
     with PatchEnv(
         "tasks/task_003_wrong_operator",

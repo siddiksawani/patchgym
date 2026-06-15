@@ -20,7 +20,11 @@ class TrajectoryLogger:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
-        self.episode_id = episode_id or f"{_slug(agent_name)}_{_slug(task_id)}_{timestamp}"
+        self.episode_id = (
+            _slug(episode_id)
+            if episode_id is not None
+            else f"{_slug(agent_name)}_{_slug(task_id)}_{timestamp}"
+        )
         self.path = self.output_dir / f"{self.episode_id}.jsonl"
         self._file: TextIO = self.path.open("a", encoding="utf-8")
 

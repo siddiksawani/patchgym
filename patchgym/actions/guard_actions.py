@@ -14,12 +14,13 @@ class AddGuardAction(PatchAction):
     return_expression: str
 
     def apply(self, code: str) -> str:
-        parameter_name = _first_function_parameter(code)
-        if parameter_name is None:
+        function = _first_function_with_parameter(code)
+        if function is None:
             return code
 
+        parameter_name = function.args.args[0].arg
         condition = self.condition_template.format(param=parameter_name)
-        return _insert_guard(code, condition, self.return_expression)
+        return _insert_guard(code, function, condition, self.return_expression)
 
 
 class AddNoneGuardAction(AddGuardAction):
@@ -44,7 +45,7 @@ class AddEmptyListGuardAction(AddGuardAction):
         )
 
 
-def _first_function_parameter(code: str) -> str | None:
+def _first_function_with_parameter(code: str) -> ast.FunctionDef | None:
     try:
         module = ast.parse(code)
     except SyntaxError:
@@ -52,27 +53,23 @@ def _first_function_parameter(code: str) -> str | None:
 
     for node in module.body:
         if isinstance(node, ast.FunctionDef) and node.args.args:
-            return node.args.args[0].arg
+            return node
     return None
 
 
-def _insert_guard(code: str, condition: str, return_expression: str) -> str:
-    try:
-        module = ast.parse(code)
-    except SyntaxError:
-        return code
-
-    function = next((node for node in module.body if isinstance(node, ast.FunctionDef)), None)
-    if function is None:
-        return code
-
+def _insert_guard(
+    code: str,
+    function: ast.FunctionDef,
+    condition: str,
+    return_expression: str,
+) -> str:
     guard_line = f"if {condition}:"
     if any(line.strip() == guard_line for line in code.splitlines()):
         return code
 
     lines = code.splitlines()
-    insert_at = function.lineno
-    indent = _function_body_indent(lines, insert_at)
+    insert_at = _guard_insert_index(function)
+    indent = _function_body_indent(lines, function)
     guard_lines = [
         f"{indent}{guard_line}",
         f"{indent}    return {return_expression}",
@@ -83,11 +80,23 @@ def _insert_guard(code: str, condition: str, return_expression: str) -> str:
     return "\n".join(updated_lines) + trailing_newline
 
 
-def _function_body_indent(lines: list[str], body_start_index: int) -> str:
-    if body_start_index < len(lines):
+def _guard_insert_index(function: ast.FunctionDef) -> int:
+    if (
+        function.body
+        and isinstance(function.body[0], ast.Expr)
+        and isinstance(function.body[0].value, ast.Constant)
+        and isinstance(function.body[0].value.value, str)
+    ):
+        return function.body[0].end_lineno or function.body[0].lineno
+    return function.lineno
+
+
+def _function_body_indent(lines: list[str], function: ast.FunctionDef) -> str:
+    if function.body:
+        body_start_index = function.body[0].lineno - 1
         next_line = lines[body_start_index]
         stripped = next_line.lstrip()
         if stripped:
             return next_line[: len(next_line) - len(stripped)]
-    def_line = lines[body_start_index - 1]
+    def_line = lines[function.lineno - 1]
     return def_line[: len(def_line) - len(def_line.lstrip())] + "    "

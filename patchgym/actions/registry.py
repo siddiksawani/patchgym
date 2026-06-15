@@ -7,9 +7,19 @@ from patchgym.actions.guard_actions import AddEmptyListGuardAction, AddNoneGuard
 from patchgym.actions.text_actions import RegexReplaceAction
 
 _SINGLE_LT = r"(?<![<>=!])<(?![=<])"
-_SINGLE_GT = r"(?<![<>=!])>(?![=>])"
+_SINGLE_GT = r"(?<![<>=!-])>(?![=>])"
 _EQUAL_EQUAL = r"(?<![=!])==(?!=)"
 _NOT_EQUAL = r"(?<![=!])!=(?!=)"
+_IDENTIFIER_OPERAND = (
+    r"(?<![A-Za-z0-9_])"
+    r"(?!(?:False|None|True|and|as|assert|async|await|break|class|continue|"
+    r"def|del|elif|else|except|finally|for|from|global|if|import|in|is|"
+    r"lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b)"
+    r"[A-Za-z_][A-Za-z0-9_]*"
+)
+_BINARY_MINUS_ONE = (
+    rf"(?P<prefix>(?:{_IDENTIFIER_OPERAND}|\d+|\]|\)))\s*-\s*1\b"
+)
 
 
 ACTION_REGISTRY: dict[str, PatchAction] = {
@@ -60,9 +70,9 @@ ACTION_REGISTRY: dict[str, PatchAction] = {
         RegexReplaceAction(
             id="replace_minus_one_with_plus_one",
             name="Replace - 1 with + 1",
-            description="Replace the first spaced minus-one expression with plus one.",
-            pattern=r"-\s*1\b",
-            replacement="+ 1",
+            description="Replace the first binary subtraction by one with plus one.",
+            pattern=_BINARY_MINUS_ONE,
+            replacement=r"\g<prefix> + 1",
         ),
         RegexReplaceAction(
             id="replace_range_len_minus_one_with_range_len",

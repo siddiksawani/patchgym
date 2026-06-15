@@ -1,0 +1,14 @@
+{
+  "task_id": "task_001_off_by_one",
+  "title": "Fix off-by-one item counter",
+  "difficulty": "easy",
+  "bug_type": "off_by_one",
+  "max_steps": 5,
+  "expected_fix": "Change range(len(items) - 1) to range(len(items)).",
+  "allowed_actions": [
+    "replace_range_len_minus_one_with_range_len",
+    "replace_minus_one_with_plus_one",
+    "replace_less_than_with_less_equal"
+  ],
+  "tags": ["python", "list", "off-by-one"]
+}

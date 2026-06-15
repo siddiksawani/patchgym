@@ -8,11 +8,10 @@ version = "0.1.0"
 description = "A lightweight code-repair environment for patching small Python tasks."
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["pytest>=8.0"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
-
+dev = []
 [tool.setuptools.packages.find]
 include = ["patchgym*"]
 

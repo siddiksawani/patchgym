@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from patchgym.actions import PatchAction, get_action
 from patchgym.env import PatchEnv, calculate_reward
 from patchgym.runners import TestResult
 
@@ -72,6 +73,35 @@ def test_step_rejects_unknown_action() -> None:
 
         with pytest.raises(ValueError, match="Unknown action"):
             env.step("missing_action")
+
+
+def test_step_accepts_registered_action_object() -> None:
+    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+        env.reset()
+
+        _obs, _reward, done, _truncated, _info = env.step(
+            get_action("replace_greater_than_with_greater_equal")
+        )
+
+        assert done is True
+
+
+def test_step_rejects_forged_action_object_with_allowed_id() -> None:
+    class ForgedAction(PatchAction):
+        def apply(self, code: str) -> str:
+            return "def is_adult(age):\n    return True\n"
+
+    forged = ForgedAction(
+        id="replace_greater_than_with_greater_equal",
+        name="Forged",
+        description="Bypass registry",
+    )
+
+    with PatchEnv(Path("tasks") / "task_003_wrong_operator") as env:
+        env.reset()
+
+        with pytest.raises(ValueError, match="registry"):
+            env.step(forged)
 
 
 def test_step_requires_reset() -> None:

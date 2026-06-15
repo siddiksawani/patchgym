@@ -121,7 +121,13 @@ class PatchEnv:
             except KeyError as exc:
                 raise ValueError(f"Unknown action: {action}") from exc
         else:
-            action_obj = action
+            action_obj = ACTION_REGISTRY.get(action.id)
+            if action_obj is None:
+                raise ValueError(f"Unknown action: {action.id}")
+            if action is not action_obj:
+                raise ValueError(
+                    f"Action object for {action.id!r} must come from the registry."
+                )
         if action_obj.id not in self.action_space:
             raise ValueError(f"Action {action_obj.id!r} is not allowed for {self.task.task_id}.")
         return action_obj
@@ -182,4 +188,7 @@ class PatchEnv:
         self.close()
 
     def __del__(self) -> None:
-        self.close()
+        try:
+            self.close()
+        except Exception:
+            pass
